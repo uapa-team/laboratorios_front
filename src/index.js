@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import MaterialUiTheme from "./material_theme";
 import UnalCanvas from "./Components/UnalTemplate/UnalCanvas";
 import Login from "./Views/Login";
+import Form from "./Views/Form";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { register } from "./serviceWorker";
@@ -12,7 +13,7 @@ ReactDOM.render(
       <UnalCanvas>
         <Switch>
           <Route exact path="/" component={Login} />
-          {/* <Route exact path="/video/:id" component={Video} /> */}
+          <Route exact path="/form" component={Form} />
         </Switch>
       </UnalCanvas>
     </BrowserRouter>

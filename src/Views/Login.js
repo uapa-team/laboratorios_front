@@ -16,7 +16,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default withRouter(() => {
+export default withRouter((props) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const handleUsername = (e) => {
@@ -29,6 +29,7 @@ export default withRouter(() => {
   };
   const handleSubmit = () => {
     console.log([username, password]);
+    props.history.push("/form");
   };
   const classes = useStyles();
   return (
