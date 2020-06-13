@@ -1,17 +1,22 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
-
+import React from "react";
+import ReactDOM from "react-dom";
+import MaterialUiTheme from "./material_theme";
+import UnalCanvas from "./Components/UnalTemplate/UnalCanvas";
+import Login from "./Views/Login";
+import { ThemeProvider } from "@material-ui/core/styles";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { register } from "./serviceWorker";
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  <ThemeProvider theme={MaterialUiTheme}>
+    <BrowserRouter>
+      <UnalCanvas>
+        <Switch>
+          <Route exact path="/" component={Login} />
+          {/* <Route exact path="/video/:id" component={Video} /> */}
+        </Switch>
+      </UnalCanvas>
+    </BrowserRouter>
+  </ThemeProvider>,
+  document.getElementById("root")
 );
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+register();
