@@ -8,7 +8,7 @@ import {
   SelectValidator,
 } from "react-material-ui-form-validator";
 import { withRouter } from "react-router-dom";
-export default withRouter(() => {
+export default withRouter((props) => {
   const [dni, setDni] = useState("");
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
@@ -16,8 +16,6 @@ export default withRouter(() => {
   const [lab, setLab] = useState("");
   const [admissionTime, setAdmissionTime] = useState(null);
   const [departureTime, setDepartureTime] = useState(null);
-  const [validRole, setValidRole] = useState(true);
-  const [validBuilding, setValidBuilding] = useState(true);
   const [validAdmissionTime, setValidAdmissionTime] = useState(true);
   const [validDeppartureTime, setValidDepartureTime] = useState(true);
   const handleDni = (e) => {
@@ -40,12 +38,28 @@ export default withRouter(() => {
     e.preventDefault();
     setLab(e.target.value);
   };
+  const handleAdmissionTime = (v) => {
+    setAdmissionTime(v);
+    setValidAdmissionTime(v !== null);
+  };
+  const handleDepartureTime = (v) => {
+    setDepartureTime(v);
+    setValidDepartureTime(v !== null);
+  };
   const handleSubmit = () => {
-    console.log(role);
-    setValidRole(role !== "");
-    setValidBuilding(building !== "");
     setValidAdmissionTime(admissionTime !== null);
     setValidDepartureTime(departureTime !== null);
+    if (
+      !dni ||
+      !name ||
+      !role ||
+      !building ||
+      !lab ||
+      !admissionTime ||
+      !departureTime
+    )
+      return;
+    props.history.push("/scan");
   };
   const useStyles = makeStyles({
     title: {
@@ -65,7 +79,11 @@ export default withRouter(() => {
       <Typography variant="h6" className={classes.title}>
         Por favor llene cada uno de estos campos cuidadosamente
       </Typography>
-      <ValidatorForm className={classes.form} onSubmit={handleSubmit}>
+      <ValidatorForm
+        className={classes.form}
+        onSubmit={handleSubmit}
+        onError={handleSubmit}
+      >
         <TextValidator
           className={classes.textInput}
           label="Documento de identidad"
@@ -80,6 +98,7 @@ export default withRouter(() => {
         <TextValidator
           className={classes.textInput}
           label="Nombre Completo"
+          autoComplete="off"
           onChange={handleName}
           name="name"
           variant="outlined"
@@ -91,7 +110,6 @@ export default withRouter(() => {
           value={role}
           onChange={handleRole}
           label="Vinculación"
-          error={!validRole}
           className={classes.textInput}
           variant="outlined"
           validators={["required"]}
@@ -105,7 +123,6 @@ export default withRouter(() => {
           value={building}
           onChange={handleBuilding}
           label="Edificio"
-          error={!validBuilding}
           variant="outlined"
           className={classes.textInput}
           validators={["required"]}
@@ -144,7 +161,10 @@ export default withRouter(() => {
           label="Fecha y Hora de Ingreso"
           inputVariant="outlined"
           value={admissionTime}
-          onChange={(v) => setAdmissionTime(v)}
+          cancelLabel="CANCELAR"
+          clearLabel="LIMPIAR"
+          onChange={handleAdmissionTime}
+          helperText={!validAdmissionTime && "Este campo es requerido"}
         />
         <TimePicker
           className={classes.textInput}
@@ -152,9 +172,12 @@ export default withRouter(() => {
           clearable
           autoOk
           label="Hora Estimada de Salida"
+          cancelLabel="CANCELAR"
+          clearLabel="LIMPIAR"
           value={departureTime}
-          onChange={(v) => setDepartureTime(v)}
+          onChange={handleDepartureTime}
           inputVariant="outlined"
+          helperText={!validAdmissionTime && "Este campo es requerido"}
         />
         <Button
           type="submit"
