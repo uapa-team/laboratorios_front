@@ -7,16 +7,20 @@ import Form from "./Views/Form";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { register } from "./serviceWorker";
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
 ReactDOM.render(
   <ThemeProvider theme={MaterialUiTheme}>
-    <BrowserRouter>
-      <UnalCanvas>
-        <Switch>
-          <Route exact path="/" component={Login} />
-          <Route exact path="/form" component={Form} />
-        </Switch>
-      </UnalCanvas>
-    </BrowserRouter>
+    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <BrowserRouter>
+        <UnalCanvas>
+          <Switch>
+            <Route exact path="/" component={Login} />
+            <Route exact path="/form" component={Form} />
+          </Switch>
+        </UnalCanvas>
+      </BrowserRouter>
+    </MuiPickersUtilsProvider>
   </ThemeProvider>,
   document.getElementById("root")
 );
