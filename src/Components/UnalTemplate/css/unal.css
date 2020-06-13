@@ -638,8 +638,8 @@ ul.dropdown-menu a:focus {
   text-indent: 0 !important;
   color: #ddd;
   display: inline;
-  font-size: 1em;
-  width: 150px !important;
+  font-size: 90%;
+  /* width: 150px !important; */
   text-align: center;
 }
 
