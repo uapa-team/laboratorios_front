@@ -13,7 +13,7 @@ export default class Backend {
       {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: "Token " + localStorage.getItem("jwt"),
+        token: localStorage.getItem("jwt"),
       },
       body
     );
@@ -32,6 +32,20 @@ export default class Backend {
         password: password,
       }
     );
+  }
+
+  static async verifyToken() {
+    if (!localStorage.getItem("jwt")) {
+      return false;
+    } else {
+      return this._request("GET", "valid", {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        token: localStorage.getItem("jwt"),
+      })
+        .then((res) => res.json())
+        .then((res) => res.valid === "yes");
+    }
   }
 
   static _request(method, path, headers, body) {

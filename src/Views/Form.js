@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Typography, Grid, Button, MenuItem } from "@material-ui/core";
 import { DateTimePicker, TimePicker } from "@material-ui/pickers";
 import { makeStyles } from "@material-ui/core/styles";
@@ -7,17 +7,27 @@ import {
   TextValidator,
   SelectValidator,
 } from "react-material-ui-form-validator";
+import Backend from "../serviceBackend";
 import { withRouter } from "react-router-dom";
 export default withRouter((props) => {
   const [dni, setDni] = useState("");
-  const [name, setName] = useState("");
+  const [full_name, setName] = useState("");
   const [role, setRole] = useState("");
   const [building, setbuilding] = useState("");
   const [lab, setLab] = useState("");
-  const [admissionTime, setAdmissionTime] = useState(null);
-  const [departureTime, setDepartureTime] = useState(null);
+  const [admission_time, setAdmissionTime] = useState(null);
+  const [departure_time, setDepartureTime] = useState(null);
   const [validAdmissionTime, setValidAdmissionTime] = useState(true);
   const [validDeppartureTime, setValidDepartureTime] = useState(true);
+  useEffect(() => {
+    Backend.verifyToken().then((valid) => {
+      if (!valid) {
+        localStorage.removeItem("jwt");
+        props.history.push("/");
+      }
+    });
+    // eslint-disable-next-line
+  }, []);
   const handleDni = (e) => {
     e.preventDefault();
     setDni(e.target.value);
@@ -47,21 +57,35 @@ export default withRouter((props) => {
     setValidDepartureTime(v !== null);
   };
   const handleSubmit = () => {
-    setValidAdmissionTime(admissionTime !== null);
-    setValidDepartureTime(departureTime !== null);
+    setValidAdmissionTime(admission_time !== null);
+    setValidDepartureTime(departure_time !== null);
     if (
       !dni ||
-      !name ||
+      !full_name ||
       !role ||
       !building ||
       !lab ||
-      !admissionTime ||
-      !departureTime
+      !admission_time ||
+      !departure_time
     )
       return;
-    props.history.push("/scan");
+    props.history.push({
+      pathname: "/scan",
+      state: {
+        dni,
+        full_name,
+        role,
+        building,
+        lab,
+        admission_time,
+        departure_time,
+      },
+    });
   };
   const useStyles = makeStyles({
+    root: {
+      paddingBottom: "1%",
+    },
     title: {
       textAlign: "center",
     },
@@ -72,10 +96,13 @@ export default withRouter((props) => {
     textInput: {
       marginTop: "5%",
     },
+    lastButton: {
+      marginBottom: "7%",
+    },
   });
   const classes = useStyles();
   return (
-    <Grid>
+    <Grid className={classes.root}>
       <Typography variant="h6" className={classes.title}>
         Por favor llene cada uno de estos campos cuidadosamente
       </Typography>
@@ -104,7 +131,7 @@ export default withRouter((props) => {
           variant="outlined"
           validators={["required"]}
           errorMessages={["Este campo es requerido"]}
-          value={name}
+          value={full_name}
         />
         <SelectValidator
           value={role}
@@ -146,6 +173,7 @@ export default withRouter((props) => {
           className={classes.textInput}
           label="Laboratorio"
           onChange={handleLab}
+          autoComplete="off"
           name="lab"
           variant="outlined"
           validators={["required"]}
@@ -160,7 +188,7 @@ export default withRouter((props) => {
           format="dd/MM/yyyy HH:mm"
           label="Fecha y Hora de Ingreso"
           inputVariant="outlined"
-          value={admissionTime}
+          value={admission_time}
           cancelLabel="CANCELAR"
           clearLabel="LIMPIAR"
           onChange={handleAdmissionTime}
@@ -174,7 +202,7 @@ export default withRouter((props) => {
           label="Hora Estimada de Salida"
           cancelLabel="CANCELAR"
           clearLabel="LIMPIAR"
-          value={departureTime}
+          value={departure_time}
           onChange={handleDepartureTime}
           inputVariant="outlined"
           helperText={!validAdmissionTime && "Este campo es requerido"}

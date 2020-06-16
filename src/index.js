@@ -5,6 +5,7 @@ import UnalCanvas from "./Components/UnalTemplate/UnalCanvas";
 import Login from "./Views/Login";
 import Form from "./Views/Form";
 import Scan from "./Views/Scan";
+import Success from "./Views/Success";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { register } from "./serviceWorker";
@@ -19,6 +20,7 @@ ReactDOM.render(
             <Route exact path="/" component={Login} />
             <Route exact path="/form" component={Form} />
             <Route exact path="/scan" component={Scan} />
+            <Route exact path="/success" component={Success} />
           </Switch>
         </UnalCanvas>
       </BrowserRouter>

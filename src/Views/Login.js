@@ -1,5 +1,15 @@
-import React, { useState } from "react";
-import { Typography, Grid, Button, Snackbar } from "@material-ui/core";
+import React, { useState, useEffect } from "react";
+import {
+  Typography,
+  Grid,
+  Button,
+  Snackbar,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { makeStyles } from "@material-ui/core/styles";
@@ -23,6 +33,13 @@ export default withRouter((props) => {
   const [password, setPassword] = useState("");
   const [showSnack, setShowSnack] = useState(false);
   const [snackProp, setSnackProp] = useState("");
+  const [errorNum, setErrorNum] = useState(0);
+  const [showDialog, setShowDialog] = useState(false);
+  useEffect(() => {
+    if (errorNum && errorNum % 2 === 0) {
+      setShowDialog(true);
+    }
+  }, [errorNum]);
   const handleUsername = (e) => {
     e.preventDefault();
     setUsername(e.target.value);
@@ -40,9 +57,11 @@ export default withRouter((props) => {
       } else if (res.status === 203) {
         setSnackProp("Usuario o contraseña incorrectos");
         setShowSnack(true);
+        setErrorNum(errorNum + 1);
       } else {
         setSnackProp("Error en el servidor");
         setShowSnack(true);
+        setErrorNum(errorNum + 1);
       }
     });
   };
@@ -85,7 +104,32 @@ export default withRouter((props) => {
           Ingresar
         </Button>
       </ValidatorForm>
-
+      <Dialog
+        open={showDialog}
+        onClose={() => setShowDialog(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"¿Está usando una cuenta institucional?"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Recuerde que esta plataforma es de uso exclusivo personal, por lo
+            tanto no se encuentra habilitada para uso de cuentas institucionales
+            o cuentas de dependencias u oficinas de la univesidad.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setShowDialog(false)}
+            color="primary"
+            autoFocus
+          >
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Snackbar
         anchorOrigin={{
           vertical: "bottom",

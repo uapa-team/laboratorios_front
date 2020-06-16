@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import QrReader from "react-qr-reader";
 import { Typography, Grid, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import Backend from "../serviceBackend";
 const useStyles = makeStyles({
   title: {
     textAlign: "center",
@@ -17,9 +18,52 @@ const useStyles = makeStyles({
     marginTop: "15%",
   },
 });
-export default withRouter(() => {
+export default withRouter((props) => {
   const classes = useStyles();
   const [validButton, setValidButton] = useState(false);
+  const handleSubmit = () => {
+    Backend.sendRequest("POST", "register", {
+      ...props.location.state,
+      admission_time: props.location.state.admission_time.toLocaleString(),
+      departure_time: props.location.state.departure_time.toLocaleTimeString(),
+    }).then((res) => {
+      if (res.status === 201) {
+        props.history.push("/success");
+      } else {
+        console.log(res);
+      }
+    });
+  };
+  useEffect(() => {
+    console.log(props.location.state);
+    Backend.verifyToken().then((valid) => {
+      if (!valid) {
+        localStorage.removeItem("jwt");
+        props.history.push("/");
+      }
+    });
+    const {
+      dni,
+      full_name,
+      role,
+      building,
+      lab,
+      admission_time,
+      departure_time,
+    } = props.location.state;
+    if (
+      !dni ||
+      !full_name ||
+      !role ||
+      !building ||
+      !lab ||
+      !admission_time ||
+      !departure_time
+    ) {
+      props.history.push("/form");
+    }
+    // eslint-disable-next-line
+  }, []);
   const handleData = (data) => {
     if (data) setValidButton(data === "~yfuH_#*f)^F)6`@");
   };
@@ -36,11 +80,11 @@ export default withRouter(() => {
           onScan={handleData}
         />
         <Button
-          type="submit"
           variant="contained"
           color="primary"
           className={classes.textInput}
           disabled={!validButton}
+          onClick={handleSubmit}
         >
           Enviar formulario
         </Button>
